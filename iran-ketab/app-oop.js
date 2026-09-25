@@ -1,4 +1,3 @@
-const fetchLibrary = "https://api.itbook.store/1.0/new";
 const bookProducts = document.querySelectorAll(".book-products-center");
 const lastVisitContiner = document.querySelector(".last-visit-continer");
 const buttonLastVisit = document.querySelector(".button-last-visit");
