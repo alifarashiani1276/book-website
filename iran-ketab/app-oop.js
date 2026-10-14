@@ -47,13 +47,23 @@ class fetchAndShow {
 
   async fetchAndShowBook() {
     try {
-      const response = await fetch(this.fetchLibrary);
-      if (!response.ok) throw new Error(`خطای HTTP! وضعیت: ${response.status}`);
-
-      const data = await response.json();
+      let books;
+      try {
+        const response = await fetch(this.fetchLibrary);
+        if (!response.ok)
+          throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+        if (!data.books || data.books.length === 0)
+          throw new Error("The API returned no books");
+        books = data.books;
+      } catch (apiError) {
+        // API failed: show the built-in books so the page is never empty
+        console.warn("API failed, using fallback books:", apiError);
+        books = fallbackBooks;
+      }
 
       this.bookProducts.forEach((bookProduct) => {
-        data.books.forEach((book) => {
+        books.forEach((book) => {
           const cartDiv = document.createElement("div");
           cartDiv.classList.add("cart");
 
@@ -382,7 +392,7 @@ function filterbook(textInputsearch, ArrBooksText, result) {
   if (bookFiltered.length === 0 && textInputsearch.length > 0) {
     const noResultDiv = document.createElement("div");
     noResultDiv.classList.add("no-result-message"); // برای استایل دادن
-    noResultDiv.textContent = "نتیجه‌ای یافت نشد.";
+    noResultDiv.textContent = "No results found.";
     result.appendChild(noResultDiv);
   } else {
     bookFiltered.forEach((bookElement) => {
